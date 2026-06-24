@@ -1,0 +1,120 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+export const prerender = true
+
+const categories = [
+  {
+    id: 'syarat',
+    title: 'Syarat Booking',
+    questions: [
+      { q: 'Apa saja syarat untuk menyewa peralatan?', a: 'Anda perlu menyiapkan KTP/identitas diri yang valid dan melakukan pembayaran sesuai kesepakatan. Proses booking dapat dilakukan langsung via WhatsApp.' },
+      { q: 'Apakah perlu bayar deposit?', a: 'Saat ini kami tidak membebankan biaya deposit. Anda hanya perlu membayar biaya sewa sesuai durasi yang dipilih.' }
+    ]
+  },
+  {
+    id: 'durasi',
+    title: 'Durasi Sewa',
+    questions: [
+      { q: 'Berapa lama maksimal durasi sewa?', a: 'Durasi sewa maksimal adalah 5 hari. Untuk sewa lebih dari 5 hari, silakan hubungi admin untuk pengaturan khusus.' },
+      { q: 'Bagaimana cara menghitung durasi sewa?', a: 'Durasi dihitung dari tanggal pengambilan hingga tanggal pengembalian. Misalnya, sewa 2 hari berarti ambil tanggal 1, kembali tanggal 3.' }
+    ]
+  },
+  {
+    id: 'ketentuan',
+    title: 'Ketentuan Booking',
+    questions: [
+      { q: 'Bagaimana jika saya ingin membatalkan booking?', a: 'Pembatalan dapat dilakukan dengan menghubungi admin minimal 24 jam sebelum tanggal pengambilan. Silakan koordinasi langsung via WhatsApp.' },
+      { q: 'Apakah bisa mengubah tanggal sewa?', a: 'Perubahan tanggal dapat dilakukan jika barang masih tersedia. Hubungi admin sesegera mungkin untuk penjadwalan ulang.' }
+    ]
+  },
+  {
+    id: 'kerusakan',
+    title: 'Kerusakan & Kehilangan',
+    questions: [
+      { q: 'Apa yang terjadi jika peralatan rusak saat disewa?', a: 'Kerusakan akibat pemakaian normal tidak dikenakan biaya tambahan. Namun, kerusakan akibat kelalauan atau penggunaan di luar petunjuk akan dikenakan biaya perbaikan atau penggantian.' },
+      { q: 'Bagaimana jika peralatan hilang?', a: 'Kehilangan peralatan sepenuhnya menjadi tanggung jawab penyewa. Anda perlu mengganti sesuai nilai barang yang hilang.' }
+    ]
+  },
+  {
+    id: 'antar',
+    title: 'Layanan Antar',
+    questions: [
+      { q: 'Apakah tersedia layanan antar-jemput?', a: 'Ya, kami menyediakan layanan antar-jemput untuk area Surabaya dan sekitarnya dengan biaya tambahan sesuai jarak lokasi.' },
+      { q: 'Berapa biaya layanan antar?', a: 'Biaya antar tergantung lokasi pengiriman. Silakan hubungi admin untuk informasi detail biaya pengiriman ke alamat Anda.' }
+    ]
+  }
+]
+---
+
+<Layout title="FAQ — WEXPLORE">
+  <section class="pt-24 pb-16 md:pt-28 md:pb-24">
+    <div class="container-main max-w-3xl">
+      <div class="text-center mb-10 fade-up">
+        <span class="section-label mb-4 block">FAQ</span>
+        <h1 class="heading-2 text-white mb-4">Frequently Asked Questions</h1>
+        <p class="body-text">Temukan jawaban untuk pertanyaan yang sering diajukan</p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-2 mb-8 fade-up">
+        {categories.map((cat, index) => (
+          <button
+            data-category={cat.id}
+            class:list={[
+              'px-4 py-2 rounded-lg text-sm font-medium transition-all',
+              index === 0
+                ? 'bg-primary text-white'
+                : 'bg-dark-card text-text-muted hover:text-white hover:bg-surface-border'
+            ]}
+          >
+            {cat.title}
+          </button>
+        ))}
+      </div>
+
+      {categories.map((cat, index) => (
+        <div
+          id={`category-${cat.id}`}
+          class={`space-y-3 ${index === 0 ? '' : 'hidden'}`}
+        >
+          {cat.questions.map((faq, faqIndex) => (
+            <details class="card rounded-xl group fade-up" style={`transition-delay: ${faqIndex * 50}ms`}>
+              <summary class="flex items-center justify-between p-5 cursor-pointer list-none">
+                <span class="text-sm font-medium text-white pr-4">{faq.q}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-500 shrink-0 chevron transition-transform group-open:rotate-180">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
+              </summary>
+              <div class="px-5 pb-5 text-sm text-neutral-400 leading-relaxed border-t border-surface-border pt-4">
+                {faq.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const categoryButtons = document.querySelectorAll('[data-category]');
+
+  categoryButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      categoryButtons.forEach(b => {
+        b.classList.remove('bg-primary', 'text-white');
+        b.classList.add('bg-dark-card', 'text-text-muted');
+      });
+
+      btn.classList.remove('bg-dark-card', 'text-text-muted');
+      btn.classList.add('bg-primary', 'text-white');
+
+      document.querySelectorAll('[id^="category-"]').forEach(section => {
+        section.classList.add('hidden');
+      });
+
+      const targetId = `category-${btn.dataset.category}`;
+      document.getElementById(targetId)?.classList.remove('hidden');
+    });
+  });
+</script>

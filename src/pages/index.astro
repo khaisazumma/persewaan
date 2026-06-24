@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro'
+import HeroSection from '../components/home/HeroSection.astro'
+import StatsSection from '../components/home/StatsSection.astro'
+import AdvantagesSection from '../components/home/AdvantagesSection.astro'
+import RentalGuideSection from '../components/home/RentalGuideSection.astro'
+import TestimonialSection from '../components/home/TestimonialSection.astro'
+import CTASection from '../components/home/CTASection.astro'
+import { fetchSettings } from '../lib/fetchData'
+
+export const prerender = true
+
+const settings = await fetchSettings()
+---
+
+<Layout>
+  <HeroSection whatsapp={settings.whatsapp} />
+  <StatsSection />
+  <AdvantagesSection />
+  <RentalGuideSection />
+  <TestimonialSection />
+  <CTASection />
+</Layout>

@@ -1,0 +1,80 @@
+---
+import '../styles/global.css'
+import Header from '../components/layout/Header.astro'
+import Footer from '../components/layout/Footer.astro'
+import FloatingWhatsApp from '../components/layout/FloatingWhatsApp.astro'
+import { fetchSettings } from '../lib/fetchData'
+
+interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+}
+
+const {
+  title = 'WEXPLORE — Rental Peralatan Outdoor Surabaya',
+  description = 'Sewa peralatan outdoor premium di Surabaya. Hiking, camping, dan pendakian jadi lebih mudah.',
+  ogImage = '/images/20260518_141825.jpg'
+} = Astro.props
+
+const settings = await fetchSettings()
+---
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+
+  <meta name="description" content={description} />
+  <meta name="generator" content={Astro.generator} />
+
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="id_ID" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+
+  <link rel="canonical" href={Astro.url.href} />
+
+  <!-- FAVICON -->
+  <link rel="icon" type="image/jpg" href="/images/20260518_141825.jpg" />
+  <link rel="shortcut icon" href="/images/20260518_141825.jpg" />
+  <link rel="apple-touch-icon" href="/images/20260518_141825.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+  <body class="bg-surface text-warm-50 font-sans">
+    <Header whatsapp={settings.whatsapp} />
+    <main>
+      <slot />
+    </main>
+    <Footer settings={settings} />
+    <FloatingWhatsApp whatsapp={settings.whatsapp} />
+
+    <script>
+      window.trackEvent = function(name, props) {
+        console.log('[Analytics]', name, props)
+      }
+    </script>
+
+    <script>
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
+          }
+        })
+      }, { threshold: 0.1 })
+
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el))
+    </script>
+  </body>
+</html>

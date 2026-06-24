@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+export const prerender = true
+---
+
+<Layout title="404 — Halaman Tidak Ditemukan">
+  <section class="min-h-[80vh] flex items-center justify-center px-4">
+    <div class="text-center max-w-md mx-auto fade-up">
+      <div class="w-20 h-20 rounded-2xl bg-surface-raised border border-surface-border flex items-center justify-center mx-auto mb-8">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-600">
+          <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
+        </svg>
+      </div>
+      <h1 class="text-6xl md:text-8xl font-extrabold text-white tracking-tighter mb-4">404</h1>
+      <h2 class="text-xl font-semibold text-white mb-3">Halaman Tidak Ditemukan</h2>
+      <p class="text-sm text-neutral-500 mb-8 leading-relaxed">
+        Sepertinya kamu tersesat di tengah hutan... Mari kembali ke jalur yang benar.
+      </p>
+      <a href="/" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 19-7-7 7-7"/>
+          <path d="M19 12H5"/>
+        </svg>
+        Kembali ke Home
+      </a>
+    </div>
+  </section>

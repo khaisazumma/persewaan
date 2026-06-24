@@ -1,0 +1,53 @@
+---
+import { fetchProducts } from '../../lib/fetchData'
+
+const products = await fetchProducts()
+const galleryProducts = products.slice(0, 8)
+
+const spans = [
+  'col-span-2 row-span-2',
+  'col-span-1 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-2 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-2 row-span-2',
+]
+---
+
+<section class="py-20 md:py-28 bg-surface-elevated">
+  <div class="container-main">
+    <div class="max-w-2xl mx-auto text-center mb-12 fade-up">
+      <span class="section-label mb-4 block">Galeri</span>
+      <h2 class="heading-2 text-white mb-4">Momen Petualangan</h2>
+      <p class="body-text">
+        Jelajahi katalog peralatan WEXPLORE untuk petualangan terbaikmu
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+      {galleryProducts.map((product, index) => (
+        <a
+          href={`/catalog/${product.id}`}
+          class={`relative overflow-hidden rounded-xl md:rounded-2xl fade-up group ${spans[index] || 'col-span-1 row-span-1'} aspect-square md:aspect-auto`}
+          style={`transition-delay: ${index * 60}ms`}
+        >
+          <img
+            src={product.gambarUrl || '/images/placeholder-gear.svg'}
+            alt={product.namaProduk}
+            loading="lazy"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            onerror="this.src='/images/placeholder-gear.svg'"
+          />
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-500"></div>
+          <div class="absolute inset-0 flex items-end p-4 md:p-6">
+            <span class="text-white font-semibold text-sm md:text-base opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+              {product.namaProduk}
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
