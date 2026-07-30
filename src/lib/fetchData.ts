@@ -152,7 +152,8 @@ export async function fetchProducts(): Promise<Product[]> {
       bestSeller: parseBoolean(row[12]),
       produkBaru: parseBoolean(row[13]),
       urutan: parseNumber(row[14]),
-      aktif
+      aktif,
+      durasiSewa: parseNumber(row[16]) || 1
     })
   }
 

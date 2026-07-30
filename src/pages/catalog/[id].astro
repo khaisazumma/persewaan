@@ -35,6 +35,8 @@ const prices = {
   4: product.harga4Hari,
   5: product.harga5Hari
 }
+const minimumDuration = Number(product.durasiSewa) || 1;
+const startingPrice = prices[minimumDuration];
 
 const statusColors: Record<string, string> = {
   Available: 'bg-success',
@@ -91,44 +93,42 @@ const today = new Date().toISOString().split('T')[0]
           <div class="card p-6 mb-6">
             <div class="flex items-baseline gap-1.5 mb-6">
               <span class="text-sm text-neutral-500">Harga mulai</span>
-              <span id="harga-display" class="text-4xl font-extrabold text-white tracking-tighter">
-                {formatRupiah(Math.min(
-                  product.harga1Hari || Infinity,
-                  product.harga2Hari || Infinity,
-                  product.harga3Hari || Infinity,
-                  product.harga4Hari || Infinity,
-                  product.harga5Hari || Infinity
-                ) < Infinity ? Math.min(
-                  product.harga1Hari || Infinity,
-                  product.harga2Hari || Infinity,
-                  product.harga3Hari || Infinity,
-                  product.harga4Hari || Infinity,
-                  product.harga5Hari || Infinity
-                ) : product.harga1Hari)}
-              </span>
+<span id="harga-display" class="text-4xl font-extrabold text-white tracking-tighter">
+  {formatRupiah(prices[minimumDuration])}
+</span>
               <span class="text-sm text-neutral-500">/hari</span>
             </div>
 
             <div class="mb-6">
               <label class="block text-sm font-medium text-white mb-3">Pilih Durasi Sewa</label>
               <div id="duration-selector" class="flex flex-wrap gap-2 mb-3">
-                {[1, 2, 3, 4, 5].map(days => (
-                  <button
-                    data-days={days}
-                    data-price={prices[days]}
-                    class:list={[
-                      'px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border',
-                      days === 1
-                        ? 'bg-olive-700 text-white border-olive-700'
-                        : 'bg-surface-raised text-neutral-400 border-surface-border hover:border-neutral-600 hover:text-white'
-                    ]}
-                  >
-                    {days} Hari
-                  </button>
-                ))}
+{[1,2,3,4,5].map(days => {
+  const disabled = days < minimumDuration;
+
+  return (
+    <button
+      data-days={days}
+      data-price={prices[days]}
+      disabled={disabled}
+      class:list={[
+        'px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border',
+
+        disabled
+          ? 'bg-surface text-neutral-600 border-surface-border cursor-not-allowed opacity-50'
+
+          : days === minimumDuration
+            ? 'bg-olive-700 text-white border-olive-700'
+
+            : 'bg-surface-raised text-neutral-400 border-surface-border hover:border-neutral-600 hover:text-white'
+      ]}
+    >
+      {days} Hari
+    </button>
+  )
+})}
               </div>
               <p class="text-xs text-neutral-500">
-                *Harga untuk <span id="harga-durasi-label">1</span> hari: <span id="harga-durasi" class="text-white font-medium">{formatRupiah(product.harga1Hari)}</span>
+                *Harga untuk <span id="harga-durasi-label">{minimumDuration}</span> hari: <span id="harga-durasi" class="text-white font-medium">{formatRupiah(prices[minimumDuration])}</span>
               </p>
             </div>
 
@@ -155,7 +155,9 @@ const today = new Date().toISOString().split('T')[0]
               </div>
             </div>
             <p class="text-sm text-neutral-500 mb-6">
-              Durasi: <span id="durasi-display" class="font-semibold text-white">1</span> Hari
+              Durasi: <span id="durasi-display" class="font-semibold text-white">
+  {minimumDuration}
+</span> Hari
             </p>
 
             <div class="divider mb-6"></div>
@@ -175,7 +177,7 @@ const today = new Date().toISOString().split('T')[0]
                   value="1"
                   min="1"
                   max={product.stok}
-                  class="w-16 text-center input-field py-2"
+                  class="qty-input w-16 text-center input-field py-2"
                 />
                 <button
                   id="qty-plus"
@@ -195,7 +197,9 @@ const today = new Date().toISOString().split('T')[0]
               <div>
                 <span class="text-sm text-neutral-500">Total harga</span>
                 <div class="text-2xl font-extrabold text-white tracking-tighter">
-                  <span id="total-harga">{formatRupiah(product.harga1Hari)}</span>
+                  <span id="total-harga">
+  {formatRupiah(prices[minimumDuration])}
+</span>
                 </div>
               </div>
             </div>
@@ -263,11 +267,12 @@ const today = new Date().toISOString().split('T')[0]
 
 <script define:vars={{ product, isAvailable }}>
   const productData = product;
+  
   const productAvailable = isAvailable;
 
   const CART_KEY = 'wexplore_cart';
 
-  let selectedDuration = 1;
+let selectedDuration = productData.durasiSewa || 1;
   let quantity = 1;
 
   const prices = {
@@ -297,21 +302,50 @@ const today = new Date().toISOString().split('T')[0]
     totalHarga.textContent = formatRupiah(prices[selectedDuration] * quantity);
   }
 
-  document.querySelectorAll('#duration-selector button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#duration-selector button').forEach(b => {
-        b.classList.remove('bg-olive-700', 'text-white', 'border-olive-700');
-        b.classList.add('bg-surface-raised', 'text-neutral-400', 'border-surface-border');
-      });
-      btn.classList.remove('bg-surface-raised', 'text-neutral-400', 'border-surface-border');
-      btn.classList.add('bg-olive-700', 'text-white', 'border-olive-700');
+document.querySelectorAll('#duration-selector button').forEach(btn => {
 
-      selectedDuration = parseInt(btn.dataset.days);
-      document.getElementById('durasi-display').textContent = selectedDuration;
-      updatePrice();
-      updateReturnDate();
+  if (btn.disabled) return;
+
+  btn.addEventListener('click', () => {
+
+    document.querySelectorAll('#duration-selector button').forEach(b => {
+      if (b.disabled) return;
+
+      b.classList.remove(
+        'bg-olive-700',
+        'text-white',
+        'border-olive-700'
+      );
+
+      b.classList.add(
+        'bg-surface-raised',
+        'text-neutral-400',
+        'border-surface-border'
+      );
     });
+
+    btn.classList.remove(
+      'bg-surface-raised',
+      'text-neutral-400',
+      'border-surface-border'
+    );
+
+    btn.classList.add(
+      'bg-olive-700',
+      'text-white',
+      'border-olive-700'
+    );
+
+    selectedDuration = Number(btn.dataset.days);
+
+    document.getElementById('durasi-display').textContent = selectedDuration;
+
+    updatePrice();
+    updateReturnDate();
+
   });
+
+});
 
   const qtyInput = document.getElementById('qty-input');
   const qtyMinus = document.getElementById('qty-minus');

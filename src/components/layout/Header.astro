@@ -151,14 +151,28 @@ const navLinks = [
   updateCartBadge()
   window.addEventListener('cartUpdated', updateCartBadge)
 
-  const header = document.getElementById('main-header')
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 60) {
-      header?.classList.add('bg-[var(--surface)]/90', 'backdrop-blur-xl', 'border-b', 'border-[var(--border)]')
-    } else {
-      header?.classList.remove('bg-[var(--surface)]/90', 'backdrop-blur-xl', 'border-b', 'border-[var(--border)]')
+window.addEventListener('scroll', () => {
+  const isDesktop = window.innerWidth >= 768
+
+  if (window.scrollY > 60) {
+    header?.classList.add(
+      'bg-[var(--surface)]/90',
+      'border-b',
+      'border-[var(--border)]'
+    )
+
+    if (isDesktop) {
+      header?.classList.add('backdrop-blur-xl')
     }
-  })
+  } else {
+    header?.classList.remove(
+      'bg-[var(--surface)]/90',
+      'backdrop-blur-xl',
+      'border-b',
+      'border-[var(--border)]'
+    )
+  }
+})
 
   const mobileMenuBtn = document.getElementById('mobile-menu-btn')
   const mobileMenu = document.getElementById('mobile-menu')

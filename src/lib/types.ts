@@ -15,6 +15,7 @@ export interface Product {
   produkBaru: boolean
   urutan: number
   aktif: boolean
+  durasiSewa: number
 }
 
 export interface Package {

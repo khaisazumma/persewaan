@@ -4,11 +4,10 @@ import Layout from '../layouts/Layout.astro'
 export const prerender = true
 
 const timeline = [
-  { year: '2022', event: 'Berdiri dengan 10 item' },
-  { year: '2023', event: '25+ item, 50+ pelanggan' },
-  { year: '2024', event: 'Sistem sewa online via WA' },
-  { year: '2025', event: '100+ pelanggan, 40+ item' },
-  { year: '2026', event: 'Website resmi diluncurkan' }
+  { year: '2017-2020', event: 'Memulai perjalanan mendaki dan menjelajahi berbagai gunung di Indonesia. Setiap perjalanan menjadi pengalaman berharga dalam memahami kebutuhan perlengkapan outdoor.' },
+  { year: '2021-2023', event: 'Mencoba berbagai jenis dan merek perlengkapan outdoor untuk menemukan gear yang nyaman, aman, dan layak digunakan di berbagai kondisi alam. ' },
+  { year: '2024-2025', event: 'Berawal dari pengalaman pribadi, muncul keinginan untuk menghadirkan layanan sewa perlengkapan outdoor yang memudahkan siapa saja menikmati alam tanpa harus memiliki semua gear sendiri. ' },
+  { year: '2026', event: 'WEXPLORE resmi didirikan sebagai penyedia jasa sewa perlengkapan outdoor yang mengutamakan kualitas, kemudahan, dan pelayanan terbaik. ' }
 ]
 
 const values = [
@@ -32,47 +31,74 @@ const icons: Record<string, string> = {
       <div class="text-center mb-16 fade-up">
         <span class="section-label mb-4 block">Tentang</span>
         <h1 class="heading-2 text-white mb-4">Tentang WEXPLORE</h1>
-        <p class="body-text">Explore More, Worry Less.</p>
+        <p class="body-text">Gear Up, Explore More</p>
       </div>
 
-      <div class="card p-6 md:p-8 mb-12 fade-up">
-        <h2 class="heading-3 text-white mb-4">Cerita Kami</h2>
-        <p class="body-text leading-relaxed">
-          WEXPLORE lahir dari kecintaan terhadap alam bebas. Kami hadir untuk memastikan setiap petualangan outdoor kamu di Surabaya dan sekitarnya bisa terlaksana tanpa hambatan peralatan. Dengan pengalaman bertahun-tahun di dunia outdoor, kami memahami kebutuhan para petualang modern yang ingin mengeksplorasi keindahan alam Indonesia dengan aman dan nyaman.
-        </p>
-      </div>
+<div class="card p-6 md:p-8 mb-12 fade-up">
+  <h2 class="heading-3 text-white mb-4">Cerita Kami</h2>
+
+  <p class="body-text leading-relaxed mb-5">
+    WEXPLORE hadir dari keinginan sederhana untuk membuat kegiatan alam bebas lebih mudah dinikmati oleh siapa saja. Kami memahami bahwa tidak semua orang memiliki perlengkapan outdoor sendiri, sementara banyak yang ingin mencoba mendaki, berkemah, atau menjelajahi alam dengan nyaman dan aman.
+  </p>
+
+  <p class="body-text leading-relaxed mb-5">
+    Karena itu, WEXPLORE hadir sebagai solusi penyewaan perlengkapan outdoor yang praktis, terjangkau, dan terpercaya. Setiap perlengkapan yang kami sediakan dipilih dengan cermat, dirawat secara berkala, dan diperiksa kondisinya sebelum disewakan, agar pelanggan dapat berpetualang dengan lebih tenang dan percaya diri.
+  </p>
+
+  <p class="body-text leading-relaxed">
+    Kami ingin menjadi lebih dari sekadar tempat penyewaan, tetapi juga teman perjalanan yang siap membantu setiap langkah petualangan Anda. Bagi kami, setiap perjalanan memiliki cerita, dan WEXPLORE ingin menjadi bagian dari cerita tersebut.
+  </p>
+</div>
 
       <div class="grid md:grid-cols-2 gap-6 mb-12">
         <div class="card p-6 md:p-8 fade-up">
           <h2 class="heading-3 text-white mb-4">Visi</h2>
           <p class="body-text leading-relaxed">
-            Menjadi platform rental peralatan outdoor terpercaya dan terlengkap di Jawa Timur, mendukung setiap petualang untuk menjelajahi Indonesia dengan aman dan nyaman.
-          </p>
+    Menjadi penyedia jasa penyewaan perlengkapan outdoor terpercaya yang memberikan kemudahan, kenyamanan, dan kualitas terbaik, sehingga semakin banyak orang dapat menikmati petualangan alam dengan aman dan penuh percaya diri.
+</p>
         </div>
 
-        <div class="card p-6 md:p-8 fade-up">
-          <h2 class="heading-3 text-white mb-4">Misi</h2>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400 shrink-0 mt-1">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-              <span class="body-text-sm">Menyediakan peralatan outdoor berkualitas tinggi</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400 shrink-0 mt-1">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-              <span class="body-text-sm">Memberikan layanan yang mudah dan terjangkau</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400 shrink-0 mt-1">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-              <span class="body-text-sm">Mendukung pariwisata outdoor di Indonesia</span>
-            </li>
-          </ul>
-        </div>
+<div class="card p-6 md:p-8 fade-up">
+  <h2 class="heading-3 text-white mb-4">Misi</h2>
+
+  <ul class="space-y-3">
+    <li class="flex items-start gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400 shrink-0 mt-1">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span class="body-text-sm">
+        Menyediakan perlengkapan outdoor yang berkualitas dan siap digunakan.
+      </span>
+    </li>
+
+    <li class="flex items-start gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400 shrink-0 mt-1">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span class="body-text-sm">
+        Memberikan pelayanan yang mudah, cepat, dan ramah.
+      </span>
+    </li>
+
+    <li class="flex items-start gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400 shrink-0 mt-1">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span class="body-text-sm">
+        Membantu pelanggan memilih perlengkapan yang sesuai dengan kebutuhan.
+      </span>
+    </li>
+
+    <li class="flex items-start gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400 shrink-0 mt-1">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span class="body-text-sm">
+        Menjadi mitra terpercaya dalam setiap petualangan.
+      </span>
+    </li>
+  </ul>
+</div>
       </div>
 
       <div class="mb-12 fade-up">

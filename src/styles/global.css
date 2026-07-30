@@ -365,3 +365,14 @@ input[type="number"]::-webkit-outer-spin-button {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qty-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
