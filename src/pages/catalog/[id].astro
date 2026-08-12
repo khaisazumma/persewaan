@@ -1,0 +1,492 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import Badge from '../../components/ui/Badge.astro'
+import ProductCard from '../../components/catalog/ProductCard.astro'
+import { fetchProducts, fetchSettings, getProductPriceByDuration } from '../../lib/fetchData'
+import { formatRupiah } from '../../lib/formatCurrency'
+import type { Product } from '../../lib/types'
+
+export async function getStaticPaths() {
+  const products = await fetchProducts()
+  return products.map(p => ({
+    params: { id: p.id },
+    props: { product: p }
+  }))
+}
+
+interface Props {
+  product: Product
+}
+
+const { product } = Astro.props
+const allProducts = await fetchProducts()
+const settings = await fetchSettings()
+
+const relatedProducts = allProducts
+  .filter(p => p.kategori === product.kategori && p.id !== product.id)
+  .slice(0, 4)
+
+const isAvailable = product.status === 'Available' && product.stok > 0
+
+const prices = {
+  1: product.harga1Hari,
+  2: product.harga2Hari,
+  3: product.harga3Hari,
+  4: product.harga4Hari,
+  5: product.harga5Hari
+}
+const minimumDuration = Number(product.durasiSewa) || 1;
+const startingPrice = prices[minimumDuration];
+
+const statusColors: Record<string, string> = {
+  Available: 'bg-success',
+  Booked: 'bg-warning',
+  Maintenance: 'bg-error'
+}
+
+const today = new Date().toISOString().split('T')[0]
+---
+
+<Layout title={`${product.namaProduk} — WEXPLORE`} description={product.deskripsi}>
+  <section class="pt-24 pb-16 md:pt-28 md:pb-24">
+    <div class="container-main">
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-neutral-500 mb-8 fade-up">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span class="mx-2 text-neutral-600">/</span>
+        <a href="/catalog" class="hover:text-white transition-colors">Katalog</a>
+        <span class="mx-2 text-neutral-600">/</span>
+        <span id="breadcrumb-product" class="text-white">{product.namaProduk}</span>
+      </nav>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        <!-- Product Image -->
+        <div class="lg:col-span-5 fade-up">
+          <div class="card overflow-hidden">
+            <div class="relative aspect-square">
+              <img
+                id="product-image"
+                src={product.gambarUrl || '/images/placeholder-gear.svg'}
+                alt={product.namaProduk}
+                class="w-full h-full object-cover"
+                onerror="this.src='/images/placeholder-gear.svg'"
+              />
+              <div id="product-badges" class="absolute top-4 left-4 flex flex-wrap gap-2">
+                {product.bestSeller && <Badge variant="secondary">Best Seller</Badge>}
+                {product.produkBaru && <Badge variant="primary">Baru</Badge>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="lg:col-span-7 fade-up">
+          <div class="flex items-center gap-3 mb-3">
+            <span id="product-category" class="text-xs text-accent-500 font-medium uppercase tracking-wider">{product.kategori}</span>
+            <div class="flex items-center gap-1.5">
+              <span id="status-dot" class:list={['w-2 h-2 rounded-full', statusColors[product.status]]}></span>
+              <span id="product-status" class="text-xs text-neutral-400">{product.status}</span>
+            </div>
+          </div>
+          <h1 id="product-name" class="heading-2 text-white mb-3">{product.namaProduk}</h1>
+          <p id="product-description" class="body-text mb-6">{product.deskripsi}</p>
+
+          <div class="card p-6 mb-6">
+            <div class="flex items-baseline gap-1.5 mb-6">
+              <span class="text-sm text-neutral-500">Harga mulai</span>
+<span id="harga-display" class="text-4xl font-extrabold text-white tracking-tighter">
+  {formatRupiah(prices[minimumDuration])}
+</span>
+              <span class="text-sm text-neutral-500">/hari</span>
+            </div>
+
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-white mb-3">Pilih Durasi Sewa</label>
+              <div id="duration-selector" class="flex flex-wrap gap-2 mb-3">
+{[1,2,3,4,5].map(days => {
+  const disabled = days < minimumDuration;
+
+  return (
+    <button
+      data-days={days}
+      data-price={prices[days]}
+      disabled={disabled}
+      class:list={[
+        'px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border',
+
+        disabled
+          ? 'bg-surface text-neutral-600 border-surface-border cursor-not-allowed opacity-50'
+
+          : days === minimumDuration
+            ? 'bg-olive-700 text-white border-olive-700'
+
+            : 'bg-surface-raised text-neutral-400 border-surface-border hover:border-neutral-600 hover:text-white'
+      ]}
+    >
+      {days} Hari
+    </button>
+  )
+})}
+              </div>
+              <p class="text-xs text-neutral-500">
+                *Harga untuk <span id="harga-durasi-label">{minimumDuration}</span> hari: <span id="harga-durasi" class="text-white font-medium">{formatRupiah(prices[minimumDuration])}</span>
+              </p>
+            </div>
+
+            <div class="divider mb-6"></div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label for="tgl-ambil" class="block text-sm font-medium text-white mb-2">Tanggal Ambil</label>
+                <input
+                  type="date"
+                  id="tgl-ambil"
+                  min={today}
+                  class="input-field"
+                />
+              </div>
+              <div>
+                <label for="tgl-kembali" class="block text-sm font-medium text-white mb-2">Tanggal Kembali</label>
+                <input
+                  type="date"
+                  id="tgl-kembali"
+                  readonly
+                  class="input-field cursor-not-allowed text-neutral-500"
+                />
+              </div>
+            </div>
+            <p class="text-sm text-neutral-500 mb-6">
+              Durasi: <span id="durasi-display" class="font-semibold text-white">
+  {minimumDuration}
+</span> Hari
+            </p>
+
+            <div class="divider mb-6"></div>
+
+            <div class="flex items-center gap-4 mb-6">
+              <label class="text-sm font-medium text-white">Jumlah</label>
+              <div class="flex items-center gap-3">
+                <button
+                  id="qty-minus"
+                  class="w-10 h-10 rounded-lg bg-surface-raised border border-surface-border text-white hover:bg-surface-border transition-colors flex items-center justify-center font-semibold"
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  id="qty-input"
+                  value="1"
+                  min="1"
+                  max={product.stok}
+                  class="qty-input w-16 text-center input-field py-2"
+                />
+                <button
+                  id="qty-plus"
+                  class="w-10 h-10 rounded-lg bg-surface-raised border border-surface-border text-white hover:bg-surface-border transition-colors flex items-center justify-center font-semibold"
+                >
+                  +
+                </button>
+              </div>
+              <span id="stock-display" class="text-sm text-neutral-500">
+                {product.stok > 0 ? `${product.stok} unit tersedia` : 'Stok habis'}
+              </span>
+            </div>
+
+            <div class="divider mb-6"></div>
+
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <span class="text-sm text-neutral-500">Total harga</span>
+                <div class="text-2xl font-extrabold text-white tracking-tighter">
+                  <span id="total-harga">
+  {formatRupiah(prices[minimumDuration])}
+</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              id="btn-add-cart"
+              disabled={!isAvailable}
+              class:list={[
+                'w-full py-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 text-base',
+                isAvailable
+                  ? 'bg-accent-500 hover:bg-accent-600 active:translate-y-0.5'
+                  : 'bg-surface-border cursor-not-allowed opacity-50'
+              ]}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="8" cy="21" r="1"/>
+                <circle cx="19" cy="21" r="1"/>
+                <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+              </svg>
+              Tambah ke Keranjang
+            </button>
+
+            {!isAvailable && (
+              <p class="text-center text-sm text-neutral-500 mt-3">
+                Produk ini sedang tidak tersedia untuk disewa
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {relatedProducts.length > 0 && (
+        <div class="mt-20">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <span class="section-label mb-2 block">Lainnya</span>
+              <h2 class="heading-3 text-white">Produk Serupa</h2>
+            </div>
+            <a href="/catalog" class="text-sm text-accent-500 hover:text-accent-400 transition-colors font-medium">
+              Lihat Semua
+            </a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {relatedProducts.map((rp, index) => (
+              <div class="fade-up" style={`transition-delay: ${index * 80}ms`}>
+                <ProductCard product={rp} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:top-4 md:right-4 bg-success text-white px-6 py-4 rounded-xl shadow-lg transform -translate-y-full opacity-0 transition-all duration-300 z-[9999]">
+    <div class="flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <span class="font-medium">Berhasil ditambahkan ke keranjang!</span>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ product, isAvailable }}>
+  import { fetchProducts } from '../../lib/fetchData'
+
+  let productData = product;
+  let productAvailable = isAvailable;
+
+  const CART_KEY = 'wexplore_cart';
+
+let selectedDuration = productData.durasiSewa || 1;
+  let quantity = 1;
+
+  let prices = {
+    1: productData.harga1Hari,
+    2: productData.harga2Hari,
+    3: productData.harga3Hari,
+    4: productData.harga4Hari,
+    5: productData.harga5Hari
+  };
+
+  function formatRupiah(amount) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount).replace('IDR', 'Rp').replace(/\s/, '');
+  }
+
+  function updatePrice() {
+    const hargaDisplay = document.getElementById('harga-display');
+    const hargaDurasi = document.getElementById('harga-durasi');
+    const hargaDurasiLabel = document.getElementById('harga-durasi-label');
+    const totalHarga = document.getElementById('total-harga');
+    hargaDisplay.textContent = formatRupiah(prices[selectedDuration]);
+    hargaDurasi.textContent = formatRupiah(prices[selectedDuration]);
+    if (hargaDurasiLabel) hargaDurasiLabel.textContent = selectedDuration;
+    totalHarga.textContent = formatRupiah(prices[selectedDuration] * quantity);
+  }
+
+  async function refreshProductFromSheet() {
+    const latest = (await fetchProducts()).find(item => item.id === productData.id)
+    if (!latest) return
+    productData = latest
+    productAvailable = latest.status === 'Available' && latest.stok > 0
+    prices = { 1: latest.harga1Hari, 2: latest.harga2Hari, 3: latest.harga3Hari, 4: latest.harga4Hari, 5: latest.harga5Hari }
+    selectedDuration = latest.durasiSewa || 1
+    document.getElementById('breadcrumb-product').textContent = latest.namaProduk
+    document.getElementById('product-name').textContent = latest.namaProduk
+    document.getElementById('product-category').textContent = latest.kategori
+    document.getElementById('product-description').textContent = latest.deskripsi
+    document.getElementById('product-status').textContent = latest.status
+    document.getElementById('stock-display').textContent = latest.stok > 0 ? `${latest.stok} unit tersedia` : 'Stok habis'
+    document.getElementById('product-badges').innerHTML = `${latest.bestSeller ? '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-accent-500 text-white">Best Seller</span>' : ''}${latest.produkBaru ? '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-olive-700 text-white">Baru</span>' : ''}`
+    const statusDot = document.getElementById('status-dot')
+    statusDot.classList.remove('bg-success', 'bg-warning', 'bg-error')
+    statusDot.classList.add(latest.status === 'Available' ? 'bg-success' : latest.status === 'Booked' ? 'bg-warning' : 'bg-error')
+    const image = document.getElementById('product-image')
+    image.src = latest.gambarUrl || '/images/placeholder-gear.svg'
+    image.alt = latest.namaProduk
+    document.getElementById('qty-input').max = latest.stok
+    document.querySelector('#btn-add-cart').disabled = !productAvailable
+    document.querySelectorAll('#duration-selector button').forEach(button => {
+      const days = Number(button.dataset.days)
+      button.dataset.price = prices[days]
+      button.disabled = days < selectedDuration
+    })
+    updatePrice()
+  }
+
+  document.querySelectorAll('#duration-selector button').forEach(btn => {
+
+  if (btn.disabled) return;
+
+  btn.addEventListener('click', () => {
+
+    document.querySelectorAll('#duration-selector button').forEach(b => {
+      if (b.disabled) return;
+
+      b.classList.remove(
+        'bg-olive-700',
+        'text-white',
+        'border-olive-700'
+      );
+
+      b.classList.add(
+        'bg-surface-raised',
+        'text-neutral-400',
+        'border-surface-border'
+      );
+    });
+
+    btn.classList.remove(
+      'bg-surface-raised',
+      'text-neutral-400',
+      'border-surface-border'
+    );
+
+    btn.classList.add(
+      'bg-olive-700',
+      'text-white',
+      'border-olive-700'
+    );
+
+    selectedDuration = Number(btn.dataset.days);
+
+    document.getElementById('durasi-display').textContent = selectedDuration;
+
+    updatePrice();
+    updateReturnDate();
+
+  });
+
+});
+
+  const qtyInput = document.getElementById('qty-input');
+  const qtyMinus = document.getElementById('qty-minus');
+  const qtyPlus = document.getElementById('qty-plus');
+
+  qtyMinus.addEventListener('click', () => {
+    if (quantity > 1) {
+      quantity--;
+      qtyInput.value = quantity;
+      updatePrice();
+    }
+  });
+
+  qtyPlus.addEventListener('click', () => {
+    if (quantity < productData.stok) {
+      quantity++;
+      qtyInput.value = quantity;
+      updatePrice();
+    }
+  });
+
+  qtyInput.addEventListener('change', () => {
+    let val = parseInt(qtyInput.value) || 1;
+    val = Math.max(1, Math.min(val, productData.stok));
+    quantity = val;
+    qtyInput.value = val;
+    updatePrice();
+  });
+
+  const tglAmbil = document.getElementById('tgl-ambil');
+  const tglKembali = document.getElementById('tgl-kembali');
+
+  function updateReturnDate() {
+    if (tglAmbil.value) {
+      const ambilDate = new Date(tglAmbil.value);
+      ambilDate.setDate(ambilDate.getDate() + selectedDuration);
+      const year = ambilDate.getFullYear();
+      const month = String(ambilDate.getMonth() + 1).padStart(2, '0');
+      const day = String(ambilDate.getDate()).padStart(2, '0');
+      tglKembali.value = `${year}-${month}-${day}`;
+    }
+  }
+
+  tglAmbil.addEventListener('change', updateReturnDate);
+
+  const btnAddCart = document.getElementById('btn-add-cart');
+  const toast = document.getElementById('toast');
+
+  function showToast() {
+    toast.classList.remove('-translate-y-full', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.add('-translate-y-full', 'opacity-0');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 3000);
+  }
+
+  refreshProductFromSheet().catch(() => {})
+
+  btnAddCart.addEventListener('click', () => {
+    if (!productAvailable) return;
+    if (!tglAmbil.value) {
+      alert('Silakan pilih tanggal ambil terlebih dahulu');
+      return;
+    }
+
+    const cartItem = {
+      type: 'product',
+      id: productData.id,
+      nama: productData.namaProduk,
+      gambar: productData.gambarUrl || '/images/placeholder-gear.svg',
+      qty: quantity,
+      harga: prices[selectedDuration],
+      durasi: selectedDuration,
+      tanggalAmbil: tglAmbil.value,
+      tanggalKembali: tglKembali.value
+    };
+
+    let cart = [];
+    try {
+      const data = localStorage.getItem(CART_KEY);
+      if (data) cart = JSON.parse(data);
+    } catch {
+      cart = [];
+    }
+
+    const existingIndex = cart.findIndex(
+      c => c.id === cartItem.id && c.type === 'product' && c.durasi === cartItem.durasi
+    );
+
+    if (existingIndex >= 0) {
+      cart[existingIndex].qty += cartItem.qty;
+    } else {
+      cart.push(cartItem);
+    }
+
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+    if (window.trackEvent) {
+      window.trackEvent('add_to_cart', {
+        productId: productData.id,
+        productName: productData.namaProduk,
+        quantity,
+        duration: selectedDuration
+      });
+    }
+
+    showToast();
+  });
+</script>

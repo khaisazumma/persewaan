@@ -1,0 +1,466 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { fetchSettings } from '../lib/fetchData'
+
+const settings = await fetchSettings()
+---
+
+<Layout title="Keranjang — WEXPLORE">
+  <section class="pt-24 pb-16 md:pt-28 md:pb-24">
+    <div class="container-main max-w-3xl">
+      <div class="mb-10 fade-up">
+        <span class="section-label mb-4 block">Keranjang</span>
+        <h1 class="heading-2 text-white mb-2">Daftar Pesanan Anda</h1>
+        <p class="body-text">Periksa kembali pesanan sebelum checkout</p>
+      </div>
+
+      <div id="cart-empty" class="hidden text-center py-20 fade-up">
+        <div class="w-16 h-16 rounded-2xl bg-surface-raised border border-surface-border flex items-center justify-center mx-auto mb-5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-600">
+            <circle cx="8" cy="21" r="1"/>
+            <circle cx="19" cy="21" r="1"/>
+            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+          </svg>
+        </div>
+        <h2 class="text-lg font-semibold text-white mb-2">Keranjang masih kosong</h2>
+        <p class="text-sm text-neutral-500 mb-6">Pilih peralatan untuk petualanganmu</p>
+        <a href="/catalog" class="btn-primary">
+          Jelajahi Katalog
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/>
+            <path d="m12 5 7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <div id="cart-content">
+        <div id="packages-section" class="hidden mb-8 fade-up">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-accent-500/10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-accent-500">
+                <path d="m7.5 4.27 9 5.15"/>
+                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                <path d="m3.3 7 8.7 5 8.7-5"/>
+                <path d="M12 22V12"/>
+              </svg>
+            </div>
+            <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Paket</h2>
+          </div>
+          <div id="packages-list" class="space-y-3"></div>
+        </div>
+
+        <div id="products-section" class="hidden mb-8 fade-up">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-olive-800/40 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-olive-400">
+                <path d="m7.5 4.27 9 5.15"/>
+                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                <path d="m3.3 7 8.7 5 8.7-5"/>
+                <path d="M12 22V12"/>
+              </svg>
+            </div>
+            <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Produk</h2>
+          </div>
+          <div id="products-list" class="space-y-3"></div>
+        </div>
+
+        <div id="customer-form" class="card p-6 mb-8 fade-up">
+          <div class="flex items-center gap-2 mb-6">
+            <div class="w-8 h-8 rounded-lg bg-surface-raised border border-surface-border flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-400">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Data Penyewa</h2>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label for="customer-name" class="block text-sm font-medium text-neutral-400 mb-2">Nama Lengkap <span class="text-accent-500">*</span></label>
+              <input type="text" id="customer-name" class="input-field" placeholder="Masukkan nama lengkap" />
+            </div>
+            <div>
+              <label for="customer-phone" class="block text-sm font-medium text-neutral-400 mb-2">Nomor HP <span class="text-accent-500">*</span></label>
+              <input type="tel" id="customer-phone" class="input-field" placeholder="Contoh: 08123456789" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-neutral-400 mb-3">Opsi Pengambilan <span class="text-accent-500">*</span></label>
+              <div class="flex gap-3">
+                <label class="flex-1 cursor-pointer">
+                  <input type="radio" name="delivery-option" value="ambil" class="peer hidden" checked />
+                  <div class="card p-4 text-center border-2 border-transparent peer-checked:border-olive-600 peer-checked:bg-olive-800/20 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 text-neutral-400 peer-checked:text-olive-400">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                    </svg>
+                    <span class="text-sm font-medium text-white">Ambil Sendiri</span>
+                  </div>
+                </label>
+                <label class="flex-1 cursor-pointer">
+                  <input type="radio" name="delivery-option" value="dikirim" class="peer hidden" />
+                  <div class="card p-4 text-center border-2 border-transparent peer-checked:border-olive-600 peer-checked:bg-olive-800/20 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 text-neutral-400 peer-checked:text-olive-400">
+                      <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+                      <path d="M15 18H9"/>
+                      <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-3.87A1 1 0 0 0 17.52 8H14"/>
+                    </svg>
+                    <span class="text-sm font-medium text-white">Dikirim</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div id="address-field" class="hidden">
+              <label for="customer-address" class="block text-sm font-medium text-neutral-400 mb-2">Alamat Pengiriman <span class="text-accent-500">*</span></label>
+              <textarea id="customer-address" rows="3" class="input-field resize-none" placeholder="Masukkan alamat lengkap"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 mb-8 fade-up">
+          <div class="flex items-center gap-2 mb-6">
+            <div class="w-8 h-8 rounded-lg bg-surface-raised border border-surface-border flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-400">
+                <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+                <path d="M3 5v2a2 2 0 0 0 2 2h15"/>
+                <path d="M21 9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9"/>
+              </svg>
+            </div>
+            <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Ringkasan</h2>
+          </div>
+          <div class="space-y-2 mb-4">
+            <div class="flex justify-between text-sm">
+              <span class="text-neutral-500">Subtotal Paket</span>
+              <span id="subtotal-package" class="text-white">Rp 0</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-neutral-500">Subtotal Produk</span>
+              <span id="subtotal-product" class="text-white">Rp 0</span>
+            </div>
+          </div>
+          <div class="divider pt-4 mb-4">
+            <div class="flex justify-between items-end">
+              <span class="text-sm font-semibold text-white">Total Pembayaran</span>
+              <span id="total-payment" class="text-2xl font-extrabold text-white tracking-tighter">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-checkout" disabled class="w-full py-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 bg-whatsapp hover:bg-[#20BD5A] disabled:opacity-50 disabled:cursor-not-allowed text-base fade-up">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.432-9.884 9.884-9.884 2.634 0 5.115 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Checkout via WhatsApp
+        </button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ whatsapp: settings.whatsapp }}>
+  const WHATSAPP_NUMBER = whatsapp;
+  const CART_KEY = 'wexplore_cart';
+
+  let cart = [];
+
+  function formatRupiah(amount) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount).replace('IDR', 'Rp').replace(/\s/, '');
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+
+  function loadCart() {
+    try {
+      const data = localStorage.getItem(CART_KEY);
+      cart = data ? JSON.parse(data) : [];
+    } catch {
+      cart = [];
+    }
+  }
+
+  function saveCart() {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  }
+
+  function renderCart() {
+    const cartEmpty = document.getElementById('cart-empty');
+    const cartContent = document.getElementById('cart-content');
+    const packagesSection = document.getElementById('packages-section');
+    const productsSection = document.getElementById('products-section');
+    const packagesList = document.getElementById('packages-list');
+    const productsList = document.getElementById('products-list');
+
+    if (cart.length === 0) {
+      cartEmpty.classList.remove('hidden');
+      cartContent.classList.add('hidden');
+      return;
+    }
+
+    cartEmpty.classList.add('hidden');
+    cartContent.classList.remove('hidden');
+
+    const packages = cart.filter(item => item.type === 'package');
+    const products = cart.filter(item => item.type === 'product');
+
+    if (packages.length > 0) {
+      packagesSection.classList.remove('hidden');
+      packagesList.innerHTML = packages.map(item => `
+        <div class="card p-4" data-id="${item.id}" data-type="package">
+          <div class="flex gap-4">
+            <img src="${item.gambar}" alt="${item.nama}" class="w-20 h-20 rounded-lg object-cover bg-surface-raised" onerror="this.src='/images/placeholder-gear.svg'" />
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-semibold text-white mb-1">${item.nama}</h3>
+              <p class="text-sm text-accent-500 mb-2">${formatRupiah(item.harga)}</p>
+              <div class="flex items-center gap-3">
+                <button class="qty-minus w-8 h-8 rounded-lg bg-surface-raised border border-surface-border text-white hover:bg-surface-border transition-colors flex items-center justify-center">-</button>
+                <span class="text-white font-medium w-6 text-center">${item.qty}</span>
+                <button class="qty-plus w-8 h-8 rounded-lg bg-surface-raised border border-surface-border text-white hover:bg-surface-border transition-colors flex items-center justify-center">+</button>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="text-xs text-neutral-500 mb-1">Subtotal</p>
+              <p class="text-base font-semibold text-white">${formatRupiah(item.harga * item.qty)}</p>
+              <button class="btn-remove text-sm text-error hover:text-red-400 mt-2 transition-colors">Hapus</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      packagesSection.classList.add('hidden');
+    }
+
+    if (products.length > 0) {
+      productsSection.classList.remove('hidden');
+      productsList.innerHTML = products.map(item => `
+        <div class="card p-4" data-id="${item.id}" data-type="product">
+          <div class="flex gap-4">
+            <img src="${item.gambar}" alt="${item.nama}" class="w-20 h-20 rounded-lg object-cover bg-surface-raised" onerror="this.src='/images/placeholder-gear.svg'" />
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-semibold text-white mb-1">${item.nama}</h3>
+              <p class="text-xs text-neutral-500 mb-1">${formatDate(item.tanggalAmbil)} ${item.tanggalKembali ? '→ ' + formatDate(item.tanggalKembali) : ''}</p>
+              <p class="text-xs text-accent-500 mb-2">${item.durasi} hari</p>
+              <div class="flex items-center gap-3">
+                <button class="qty-minus w-8 h-8 rounded-lg bg-surface-raised border border-surface-border text-white hover:bg-surface-border transition-colors flex items-center justify-center">-</button>
+                <span class="text-white font-medium w-6 text-center">${item.qty}</span>
+                <button class="qty-plus w-8 h-8 rounded-lg bg-surface-raised border border-surface-border text-white hover:bg-surface-border transition-colors flex items-center justify-center">+</button>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="text-sm text-accent-500 mb-1">${formatRupiah(item.harga)}</p>
+              <p class="text-xs text-neutral-500 mb-1">Subtotal</p>
+              <p class="text-base font-semibold text-white">${formatRupiah(item.harga * item.qty)}</p>
+              <button class="btn-remove text-sm text-error hover:text-red-400 mt-2 transition-colors">Hapus</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      productsSection.classList.add('hidden');
+    }
+
+    updateTotals();
+    attachEventListeners();
+  }
+
+  function updateTotals() {
+    const packages = cart.filter(item => item.type === 'package');
+    const products = cart.filter(item => item.type === 'product');
+
+    const subtotalPackage = packages.reduce((sum, item) => sum + item.harga * item.qty, 0);
+    const subtotalProduct = products.reduce((sum, item) => sum + item.harga * item.qty, 0);
+    const total = subtotalPackage + subtotalProduct;
+
+    document.getElementById('subtotal-package').textContent = formatRupiah(subtotalPackage);
+    document.getElementById('subtotal-product').textContent = formatRupiah(subtotalProduct);
+    document.getElementById('total-payment').textContent = formatRupiah(total);
+  }
+
+  function attachEventListeners() {
+    document.querySelectorAll('.qty-minus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('[data-id]');
+        const id = card.dataset.id;
+        const type = card.dataset.type;
+        const item = cart.find(c => c.id === id && c.type === type);
+        if (item && item.qty > 1) {
+          item.qty--;
+          saveCart();
+          renderCart();
+        }
+      });
+    });
+
+    document.querySelectorAll('.qty-plus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('[data-id]');
+        const id = card.dataset.id;
+        const type = card.dataset.type;
+        const item = cart.find(c => c.id === id && c.type === type);
+        if (item) {
+          item.qty++;
+          saveCart();
+          renderCart();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('[data-id]');
+        const id = card.dataset.id;
+        const type = card.dataset.type;
+        cart = cart.filter(c => !(c.id === id && c.type === type));
+        saveCart();
+        renderCart();
+      });
+    });
+  }
+
+  function getDeliveryOption() {
+    const radios = document.querySelectorAll('input[name="delivery-option"]');
+    for (const radio of radios) {
+      if (radio.checked) return radio.value;
+    }
+    return 'ambil';
+  }
+
+  function validateForm() {
+    const name = document.getElementById('customer-name').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const deliveryOption = getDeliveryOption();
+    const address = document.getElementById('customer-address').value.trim();
+    
+    if (!name || !phone) return false;
+    if (deliveryOption === 'dikirim' && !address) return false;
+    return true;
+  }
+
+  function updateCheckoutButton() {
+    const btn = document.getElementById('btn-checkout');
+    btn.disabled = cart.length === 0 || !validateForm();
+  }
+
+  document.getElementById('customer-name').addEventListener('input', updateCheckoutButton);
+  document.getElementById('customer-phone').addEventListener('input', updateCheckoutButton);
+  document.getElementById('customer-address').addEventListener('input', updateCheckoutButton);
+
+  const deliveryRadios = document.querySelectorAll('input[name="delivery-option"]');
+  const addressField = document.getElementById('address-field');
+  
+  deliveryRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (radio.value === 'dikirim' && radio.checked) {
+        addressField.classList.remove('hidden');
+      } else if (radio.value === 'ambil' && radio.checked) {
+        addressField.classList.add('hidden');
+      }
+      updateCheckoutButton();
+    });
+  });
+
+  function generateWhatsAppMessage() {
+    const name = document.getElementById('customer-name').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const deliveryOption = getDeliveryOption();
+    const address = document.getElementById('customer-address').value.trim();
+
+    const packages = cart.filter(item => item.type === 'package');
+    const products = cart.filter(item => item.type === 'product');
+    const total = cart.reduce((sum, item) => sum + item.harga * item.qty, 0);
+
+    let message = `Halo Admin WEXPLORE
+
+Saya ingin melakukan penyewaan.
+
+━━━━━━━━━━━━━━━
+DATA PENYEWA
+
+Nama      : ${name}
+Nomor HP  : ${phone}`;
+
+    if (deliveryOption === 'dikirim') {
+      message += `\nAlamat    : ${address}`;
+    } else {
+      message += `\nOpsi      : Ambil Sendiri`;
+    }
+
+    if (packages.length > 0) {
+      message += `
+
+━━━━━━━━━━━━━━━
+PAKET
+`;
+      packages.forEach(pkg => {
+        message += `
+${pkg.nama}
+Qty        : ${pkg.qty}
+Harga Paket: ${formatRupiah(pkg.harga)}
+Subtotal   : ${formatRupiah(pkg.harga * pkg.qty)}
+`;
+      });
+    }
+
+    if (products.length > 0) {
+      message += `
+━━━━━━━━━━━━━━━
+PRODUK
+`;
+      products.forEach(prod => {
+        message += `
+${prod.nama}
+Tanggal Ambil  : ${formatDate(prod.tanggalAmbil)}
+Tanggal Kembali: ${formatDate(prod.tanggalKembali)}
+Durasi         : ${prod.durasi} Hari
+Qty            : ${prod.qty}
+Harga Sewa     : ${formatRupiah(prod.harga)}
+Subtotal       : ${formatRupiah(prod.harga * prod.qty)}
+`;
+      });
+    }
+
+    message += `
+━━━━━━━━━━━━━━━
+TOTAL PEMBAYARAN
+
+${formatRupiah(total)}
+
+━━━━━━━━━━━━━━━
+
+Mohon informasi ketersediaan barang.
+
+Terima kasih`;
+
+    return message;
+  }
+
+  document.getElementById('btn-checkout').addEventListener('click', () => {
+    if (cart.length === 0 || !validateForm()) return;
+
+    const message = generateWhatsAppMessage();
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+    if (window.trackEvent) {
+      window.trackEvent('checkout', {
+        itemCount: cart.length,
+        totalAmount: cart.reduce((sum, item) => sum + item.harga * item.qty, 0)
+      });
+    }
+
+    window.open(url, '_blank');
+  });
+
+  loadCart();
+  renderCart();
+  updateCheckoutButton();
+</script>

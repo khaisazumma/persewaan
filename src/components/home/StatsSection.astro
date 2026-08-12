@@ -1,0 +1,27 @@
+---
+const stats = [
+  { value: '500+', label: 'Penyewaan Sukses' },
+  { value: '100+', label: 'Pelanggan Puas' },
+  { value: '40+', label: 'Peralatan Outdoor' }
+]
+---
+
+<section class="py-20 md:py-28 bg-[var(--surface)]">
+  <div class="container-main">
+    <div class="grid grid-cols-3 gap-6 md:gap-0">
+      {stats.map((stat, index) => (
+        <div class="text-center fade-up relative" style={`transition-delay: ${index * 100}ms`}>
+          <div class="text-3xl md:text-5xl font-extrabold text-[var(--text-white)] tracking-tighter mb-2" data-count={stat.value}>
+            {stat.value}
+          </div>
+          <div class="text-sm text-[var(--text-muted)]">
+            {stat.label}
+          </div>
+          {index < stats.length - 1 && (
+            <div class="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-16 bg-[var(--border)]"></div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

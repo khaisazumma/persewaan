@@ -1,0 +1,46 @@
+---
+const advantages = [
+  { icon: 'mountain', title: 'Peralatan Premium', desc: 'Kualitas terbaik untuk petualangan aman' },
+  { icon: 'wallet', title: 'Harga Terjangkau', desc: 'Sewa hemat tanpa kompromi kualitas' },
+  { icon: 'zap', title: 'Proses Mudah', desc: 'Booking cepat via WhatsApp' },
+  { icon: 'truck', title: 'Layanan Antar', desc: 'Antar-jemput ke lokasi Anda' },
+  { icon: 'check-circle', title: 'Stok Terjamin', desc: 'Ketersediaan selalu update' },
+  { icon: 'message-circle', title: 'Responsif', desc: 'Admin siap bantu 24/7' }
+]
+
+const icons: Record<string, string> = {
+  mountain: '<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>',
+  wallet: '<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v2a2 2 0 0 0 2 2h15"/><path d="M21 9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9"/>',
+  zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-2.04 5.37h6.06a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l2.04-5.37H4z"/>',
+  truck: '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-3.87A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  'check-circle': '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  'message-circle': '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'
+}
+---
+
+<section class="py-20 md:py-28">
+  <div class="container-main">
+    <div class="max-w-2xl mx-auto text-center mb-16 fade-up">
+      <span class="section-label mb-4 block">Keunggulan Kami</span>
+      <h2 class="heading-2 text-[var(--text-white)] mb-4">Mengapa WEXPLORE?</h2>
+      <p class="body-text">
+        Kami berkomitmen memberikan layanan rental outdoor terbaik di Surabaya
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+      {advantages.map((item, index) => (
+        <div
+          class="card card-hover p-5 md:p-7 fade-up group"
+          style={`transition-delay: ${index * 80}ms`}
+        >
+          <div class="w-11 h-11 rounded-lg bg-[var(--btn)]/20 flex items-center justify-center mb-5 group-hover:bg-[var(--btn)]/30 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--btn)] group-hover:text-[var(--btn-hover)] transition-colors" set:html={icons[item.icon]} />
+          </div>
+          <h3 class="text-base font-semibold text-[var(--text-white)] mb-2">{item.title}</h3>
+          <p class="body-text-sm">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

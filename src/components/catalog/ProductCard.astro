@@ -1,0 +1,85 @@
+---
+import Badge from '../ui/Badge.astro'
+import type { Product } from '../../lib/types'
+import { formatRupiah } from '../../lib/formatCurrency'
+
+interface Props {
+  product: Product
+}
+
+const { product } = Astro.props
+
+const statusColors: Record<string, string> = {
+  Available: 'bg-success',
+  Booked: 'bg-warning',
+  Maintenance: 'bg-error'
+}
+
+const prices = [
+  product.harga1Hari,
+  product.harga2Hari,
+  product.harga3Hari,
+  product.harga4Hari,
+  product.harga5Hari
+].filter(p => p > 0)
+
+const minPrice = prices.length > 0 ? Math.min(...prices) : product.harga1Hari
+
+const isAvailable = product.status === 'Available' && product.stok > 0
+---
+
+<a
+  href={isAvailable ? `/catalog/${product.id}` : '#'}
+  class:list={[
+    'card card-hover group flex flex-col transition-all duration-300',
+    isAvailable ? '' : 'opacity-60 cursor-not-allowed'
+  ]}
+  aria-disabled={!isAvailable}
+>
+  <div class="relative aspect-[4/3] overflow-hidden">
+    <img
+      src={product.gambarUrl || '/images/placeholder-gear.svg'}
+      alt={product.namaProduk}
+      loading="lazy"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      onerror="this.src='/images/placeholder-gear.svg'"
+    />
+    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500"></div>
+    <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+      {product.bestSeller && <Badge variant="secondary">Best Seller</Badge>}
+      {product.produkBaru && <Badge variant="primary">Baru</Badge>}
+    </div>
+    <div class="absolute bottom-3 left-3 flex items-center gap-1.5">
+      <span class:list={['w-2 h-2 rounded-full', statusColors[product.status]]}></span>
+      <span class="text-xs text-white/80 font-medium">{product.status}</span>
+    </div>
+  </div>
+
+  <div class="p-4 flex-1 flex flex-col">
+    <p class="text-xs text-[var(--accent)] font-medium mb-1 uppercase tracking-wider">{product.kategori}</p>
+    <h3 class="text-sm font-semibold text-[var(--text-white)] mb-3 line-clamp-2 leading-snug">{product.namaProduk}</h3>
+
+    <div class="mt-auto">
+      <div class="flex items-baseline gap-1.5 mb-3">
+        <span class="text-xs text-[var(--text-muted)]">Mulai</span>
+        <span class="text-lg font-bold text-[var(--text-white)]">{formatRupiah(minPrice)}</span>
+        <span class="text-xs text-[var(--text-muted)]">/hari</span>
+      </div>
+
+      <div class="pt-3 border-t border-[var(--border)] flex items-center justify-between">
+        <span class="text-xs text-[var(--text-muted)]">
+          {product.stok > 0 ? `${product.stok} unit tersedia` : 'Stok habis'}
+        </span>
+        <span class="text-xs font-medium text-[var(--accent)] group-hover:text-[var(--accent)] transition-colors flex items-center gap-1">
+          {isAvailable ? 'Detail' : 'Tidak Tersedia'}
+          {isAvailable && (
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/>
+              <path d="m12 5 7 7-7 7"/>
+            </svg>
+          )}
+        </span>
+      </div>
+    </div>
+  </div>
+</a>

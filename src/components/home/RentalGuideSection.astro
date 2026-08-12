@@ -1,0 +1,53 @@
+---
+const steps = [
+  { num: '01', title: 'Pilih Peralatan', desc: 'Telusuri katalog dan pilih peralatan yang dibutuhkan' },
+  { num: '02', title: 'Tambahkan ke Keranjang', desc: 'Tentukan durasi sewa dan tanggal pengambilan' },
+  { num: '03', title: 'Checkout via WhatsApp', desc: 'Kirim pesanan langsung ke admin kami' },
+  { num: '04', title: 'Konfirmasi Admin', desc: 'Admin akan memverifikasi ketersediaan barang' },
+  { num: '05', title: 'Ambil atau Layanan Antar', desc: 'Ambil di lokasi atau gunakan layanan antar' }
+]
+---
+
+<section class="py-20 md:py-28 bg-[var(--surface)]">
+  <div class="container-main">
+    <div class="max-w-2xl mx-auto text-center mb-16 fade-up">
+      <span class="section-label mb-4 block">Cara Kerja</span>
+      <h2 class="heading-2 text-[var(--text-white)] mb-4">Cara Menyewa</h2>
+      <p class="body-text">
+        Proses mudah dan cepat dalam 5 langkah sederhana
+      </p>
+    </div>
+
+    <div class="hidden md:block">
+      <div class="relative">
+        <div class="absolute top-14 left-[10%] right-[10%] h-px bg-[var(--border)]"></div>
+        <div class="grid grid-cols-5 gap-6">
+          {steps.map((step, index) => (
+            <div class="text-center fade-up relative" style={`transition-delay: ${index * 120}ms`}>
+              <div class="w-28 h-28 mx-auto rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-center mb-6 relative z-10">
+                <span class="text-4xl font-extrabold text-[var(--accent)] tracking-tighter">{step.num}</span>
+              </div>
+              <h3 class="text-sm font-semibold text-[var(--text-white)] mb-2">{step.title}</h3>
+              <p class="text-sm text-[var(--text-muted)] leading-relaxed max-w-[180px] mx-auto">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="md:hidden space-y-6 relative">
+      <div class="absolute left-6 top-0 bottom-0 w-px bg-[var(--border)]"></div>
+      {steps.map((step, index) => (
+        <div class="flex gap-4 relative fade-up" style={`transition-delay: ${index * 100}ms`}>
+          <div class="w-12 h-12 rounded-xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-center shrink-0 z-10">
+            <span class="text-sm font-bold text-[var(--accent)]">{step.num}</span>
+          </div>
+          <div class="card p-4 flex-1">
+            <h3 class="text-sm font-semibold text-[var(--text-white)] mb-1">{step.title}</h3>
+            <p class="text-xs text-[var(--text-muted)] leading-relaxed">{step.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
