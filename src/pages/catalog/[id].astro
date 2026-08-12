@@ -56,7 +56,7 @@ const today = new Date().toISOString().split('T')[0]
         <span class="mx-2 text-neutral-600">/</span>
         <a href="/catalog" class="hover:text-white transition-colors">Katalog</a>
         <span class="mx-2 text-neutral-600">/</span>
-        <span class="text-white">{product.namaProduk}</span>
+        <span id="breadcrumb-product" class="text-white">{product.namaProduk}</span>
       </nav>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -65,12 +65,13 @@ const today = new Date().toISOString().split('T')[0]
           <div class="card overflow-hidden">
             <div class="relative aspect-square">
               <img
+                id="product-image"
                 src={product.gambarUrl || '/images/placeholder-gear.svg'}
                 alt={product.namaProduk}
                 class="w-full h-full object-cover"
                 onerror="this.src='/images/placeholder-gear.svg'"
               />
-              <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+              <div id="product-badges" class="absolute top-4 left-4 flex flex-wrap gap-2">
                 {product.bestSeller && <Badge variant="secondary">Best Seller</Badge>}
                 {product.produkBaru && <Badge variant="primary">Baru</Badge>}
               </div>
@@ -81,14 +82,14 @@ const today = new Date().toISOString().split('T')[0]
         <!-- Product Details -->
         <div class="lg:col-span-7 fade-up">
           <div class="flex items-center gap-3 mb-3">
-            <span class="text-xs text-accent-500 font-medium uppercase tracking-wider">{product.kategori}</span>
+            <span id="product-category" class="text-xs text-accent-500 font-medium uppercase tracking-wider">{product.kategori}</span>
             <div class="flex items-center gap-1.5">
-              <span class:list={['w-2 h-2 rounded-full', statusColors[product.status]]}></span>
-              <span class="text-xs text-neutral-400">{product.status}</span>
+              <span id="status-dot" class:list={['w-2 h-2 rounded-full', statusColors[product.status]]}></span>
+              <span id="product-status" class="text-xs text-neutral-400">{product.status}</span>
             </div>
           </div>
-          <h1 class="heading-2 text-white mb-3">{product.namaProduk}</h1>
-          <p class="body-text mb-6">{product.deskripsi}</p>
+          <h1 id="product-name" class="heading-2 text-white mb-3">{product.namaProduk}</h1>
+          <p id="product-description" class="body-text mb-6">{product.deskripsi}</p>
 
           <div class="card p-6 mb-6">
             <div class="flex items-baseline gap-1.5 mb-6">
@@ -186,7 +187,7 @@ const today = new Date().toISOString().split('T')[0]
                   +
                 </button>
               </div>
-              <span class="text-sm text-neutral-500">
+              <span id="stock-display" class="text-sm text-neutral-500">
                 {product.stok > 0 ? `${product.stok} unit tersedia` : 'Stok habis'}
               </span>
             </div>
@@ -266,16 +267,17 @@ const today = new Date().toISOString().split('T')[0]
 </Layout>
 
 <script define:vars={{ product, isAvailable }}>
-  const productData = product;
-  
-  const productAvailable = isAvailable;
+  import { fetchProducts } from '../../lib/fetchData'
+
+  let productData = product;
+  let productAvailable = isAvailable;
 
   const CART_KEY = 'wexplore_cart';
 
 let selectedDuration = productData.durasiSewa || 1;
   let quantity = 1;
 
-  const prices = {
+  let prices = {
     1: productData.harga1Hari,
     2: productData.harga2Hari,
     3: productData.harga3Hari,
@@ -302,7 +304,37 @@ let selectedDuration = productData.durasiSewa || 1;
     totalHarga.textContent = formatRupiah(prices[selectedDuration] * quantity);
   }
 
-document.querySelectorAll('#duration-selector button').forEach(btn => {
+  async function refreshProductFromSheet() {
+    const latest = (await fetchProducts()).find(item => item.id === productData.id)
+    if (!latest) return
+    productData = latest
+    productAvailable = latest.status === 'Available' && latest.stok > 0
+    prices = { 1: latest.harga1Hari, 2: latest.harga2Hari, 3: latest.harga3Hari, 4: latest.harga4Hari, 5: latest.harga5Hari }
+    selectedDuration = latest.durasiSewa || 1
+    document.getElementById('breadcrumb-product').textContent = latest.namaProduk
+    document.getElementById('product-name').textContent = latest.namaProduk
+    document.getElementById('product-category').textContent = latest.kategori
+    document.getElementById('product-description').textContent = latest.deskripsi
+    document.getElementById('product-status').textContent = latest.status
+    document.getElementById('stock-display').textContent = latest.stok > 0 ? `${latest.stok} unit tersedia` : 'Stok habis'
+    document.getElementById('product-badges').innerHTML = `${latest.bestSeller ? '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-accent-500 text-white">Best Seller</span>' : ''}${latest.produkBaru ? '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-olive-700 text-white">Baru</span>' : ''}`
+    const statusDot = document.getElementById('status-dot')
+    statusDot.classList.remove('bg-success', 'bg-warning', 'bg-error')
+    statusDot.classList.add(latest.status === 'Available' ? 'bg-success' : latest.status === 'Booked' ? 'bg-warning' : 'bg-error')
+    const image = document.getElementById('product-image')
+    image.src = latest.gambarUrl || '/images/placeholder-gear.svg'
+    image.alt = latest.namaProduk
+    document.getElementById('qty-input').max = latest.stok
+    document.querySelector('#btn-add-cart').disabled = !productAvailable
+    document.querySelectorAll('#duration-selector button').forEach(button => {
+      const days = Number(button.dataset.days)
+      button.dataset.price = prices[days]
+      button.disabled = days < selectedDuration
+    })
+    updatePrice()
+  }
+
+  document.querySelectorAll('#duration-selector button').forEach(btn => {
 
   if (btn.disabled) return;
 
@@ -403,6 +435,8 @@ document.querySelectorAll('#duration-selector button').forEach(btn => {
       toast.classList.remove('translate-y-0', 'opacity-100');
     }, 3000);
   }
+
+  refreshProductFromSheet().catch(() => {})
 
   btnAddCart.addEventListener('click', () => {
     if (!productAvailable) return;

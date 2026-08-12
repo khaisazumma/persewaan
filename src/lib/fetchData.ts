@@ -54,6 +54,8 @@ function parseCSV(text: string): string[][] {
 }
 
 async function fetchCSV(url: string): Promise<string[][]> {
+  if (!url) return []
+
   try {
     const response = await fetch(url, { cache: 'no-store' })
     if (!response.ok) {
