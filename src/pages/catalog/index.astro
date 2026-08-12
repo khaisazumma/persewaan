@@ -31,23 +31,92 @@ const statuses = ['Semua Status', 'Available', 'Booked', 'Maintenance']
         <div class="flex flex-col md:flex-row gap-4 mb-4">
           <div class="flex-1">
             <div class="relative">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input type="text" id="search-input" placeholder="Cari peralatan outdoor..." class="input-field pl-11" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
+              >
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
+
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Cari peralatan outdoor..."
+                class="input-field pl-11"
+              />
             </div>
           </div>
+
           <div class="flex gap-3">
-            <select id="category-filter" class="input-field py-3 pr-10">{categories.map(cat => <option value={cat}>{cat}</option>)}</select>
-            <select id="status-filter" class="input-field py-3 pr-10">{statuses.map(status => <option value={status}>{status}</option>)}</select>
-            <select id="sort-filter" class="input-field py-3 pr-10"><option value="default">Urutan Default</option><option value="price-asc">Harga Terendah</option><option value="price-desc">Harga Tertinggi</option></select>
+            <select id="category-filter" class="input-field py-3 pr-10">
+              {categories.map(cat => (
+                <option value={cat}>{cat}</option>
+              ))}
+            </select>
+
+            <select id="status-filter" class="input-field py-3 pr-10">
+              {statuses.map(status => (
+                <option value={status}>{status}</option>
+              ))}
+            </select>
+
+            <select id="sort-filter" class="input-field py-3 pr-10">
+              <option value="default">Urutan Default</option>
+              <option value="price-asc">Harga Terendah</option>
+              <option value="price-desc">Harga Tertinggi</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <p id="result-count" class="text-sm text-neutral-500 mb-6">Menampilkan <span id="count-number" class="text-white font-medium">...</span> produk</p>
-      <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"></div>
+      <p id="result-count" class="text-sm text-neutral-500 mb-6">
+        Menampilkan
+        <span id="count-number" class="text-white font-medium">...</span>
+        produk
+      </p>
+
+      <div
+        id="products-grid"
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+      ></div>
+
       <div id="empty-state" class="hidden text-center py-20 fade-up">
-        <div class="w-16 h-16 rounded-2xl bg-surface-raised border border-surface-border flex items-center justify-center mx-auto mb-5"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-600"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
-        <h3 class="text-lg font-semibold text-white mb-2">Tidak ada produk ditemukan</h3><p class="text-sm text-neutral-500 mb-6">Coba ubah filter atau kata kunci pencarian</p>
+        <div
+          class="w-16 h-16 rounded-2xl bg-surface-raised border border-surface-border flex items-center justify-center mx-auto mb-5"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-neutral-600"
+          >
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-semibold text-white mb-2">
+          Tidak ada produk ditemukan
+        </h3>
+
+        <p class="text-sm text-neutral-500 mb-6">
+          Coba ubah filter atau kata kunci pencarian
+        </p>
       </div>
     </div>
   </section>
@@ -58,42 +127,278 @@ const statuses = ['Semua Status', 'Available', 'Booked', 'Maintenance']
 
   let productsData = []
   let filteredProducts = []
-  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]))
-  const getMinPrice = (product) => Math.min(...[product.harga1Hari, product.harga2Hari, product.harga3Hari, product.harga4Hari, product.harga5Hari].filter(price => price > 0), product.harga1Hari)
-  const formatRupiah = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount).replace('IDR', 'Rp').replace(/\s/, '')
+
+  const escapeHtml = (value) =>
+    String(value ?? '').replace(
+      /[&<>"']/g,
+      char =>
+        ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[char])
+    )
+
+  const getMinPrice = (product) =>
+    Math.min(
+      ...[
+        product.harga1Hari,
+        product.harga2Hari,
+        product.harga3Hari,
+        product.harga4Hari,
+        product.harga5Hari
+      ].filter(price => price > 0),
+      product.harga1Hari
+    )
+
+  const formatRupiah = (amount) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    })
+      .format(amount)
+      .replace('IDR', 'Rp')
+      .replace(/\s/, '')
 
   function filterProducts() {
-    const searchTerm = document.getElementById('search-input').value.toLowerCase()
-    const category = document.getElementById('category-filter').value
-    const status = document.getElementById('status-filter').value
-    const sort = document.getElementById('sort-filter').value
+    const searchTerm =
+      document.getElementById('search-input').value.toLowerCase()
+
+    const category =
+      document.getElementById('category-filter').value
+
+    const status =
+      document.getElementById('status-filter').value
+
+    const sort =
+      document.getElementById('sort-filter').value
+
     filteredProducts = productsData.filter(product => {
-      const matchesSearch = !searchTerm || [product.namaProduk, product.kategori, product.deskripsi].some(value => value.toLowerCase().includes(searchTerm))
-      return matchesSearch && (category === 'Semua' || product.kategori === category) && (status === 'Semua Status' || product.status === status)
+      const matchesSearch =
+        !searchTerm ||
+        [
+          product.namaProduk,
+          product.kategori,
+          product.deskripsi
+        ].some(value =>
+          String(value ?? '').toLowerCase().includes(searchTerm)
+        )
+
+      return (
+        matchesSearch &&
+        (category === 'Semua' || product.kategori === category) &&
+        (status === 'Semua Status' || product.status === status)
+      )
     })
-    if (sort === 'price-asc') filteredProducts.sort((a, b) => getMinPrice(a) - getMinPrice(b))
-    if (sort === 'price-desc') filteredProducts.sort((a, b) => getMinPrice(b) - getMinPrice(a))
+
+    if (sort === 'price-asc') {
+      filteredProducts.sort(
+        (a, b) => getMinPrice(a) - getMinPrice(b)
+      )
+    }
+
+    if (sort === 'price-desc') {
+      filteredProducts.sort(
+        (a, b) => getMinPrice(b) - getMinPrice(a)
+      )
+    }
   }
 
   function renderProducts() {
     const grid = document.getElementById('products-grid')
     const emptyState = document.getElementById('empty-state')
-    document.getElementById('count-number').textContent = filteredProducts.length
-    grid.innerHTML = filteredProducts.map((product, index) => {
-      const available = product.status === 'Available' && product.stok > 0
-      const statusClass = product.status === 'Available' ? 'bg-success' : product.status === 'Booked' ? 'bg-warning' : 'bg-error'
-      return `<div class="fade-up visible" style="transition-delay: ${index * 40}ms"><a href="${available ? `/catalog/${encodeURIComponent(product.id)}` : '#'}" class="card card-hover group flex flex-col transition-all duration-300 ${available ? '' : 'opacity-60 cursor-not-allowed'}" aria-disabled="${!available}"><div class="relative aspect-[4/3] overflow-hidden"><img src="${escapeHtml(product.gambarUrl || '/images/placeholder-gear.svg')}" alt="${escapeHtml(product.namaProduk)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='/images/placeholder-gear.svg'"><div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500"></div><div class="absolute top-3 left-3 flex flex-wrap gap-1.5">${product.bestSeller ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-500 text-white">Best Seller</span>' : ''}${product.produkBaru ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-olive-600 text-white">Baru</span>' : ''}</div><div class="absolute bottom-3 left-3 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ${statusClass}"></span><span class="text-xs text-white/80 font-medium">${escapeHtml(product.status)}</span></div></div><div class="p-4 flex-1 flex flex-col"><p class="text-xs text-accent-500 font-medium mb-1 uppercase tracking-wider">${escapeHtml(product.kategori)}</p><h3 class="text-sm font-semibold text-white mb-3 line-clamp-2 leading-snug">${escapeHtml(product.namaProduk)}</h3><div class="mt-auto"><div class="flex items-baseline gap-1.5 mb-3"><span class="text-xs text-neutral-500">Mulai</span><span class="text-lg font-bold text-white">${formatRupiah(getMinPrice(product))}</span><span class="text-xs text-neutral-500">/hari</span></div><div class="pt-3 border-t border-surface-border flex items-center justify-between"><span class="text-xs text-neutral-500">${product.stok > 0 ? `${product.stok} unit tersedia` : 'Stok habis'}</span><span class="text-xs font-medium text-accent-500 group-hover:text-accent-400 transition-colors">${available ? 'Detail →' : 'Tidak Tersedia'}</span></div></div></div></a></div>`
-    }).join('')
-    grid.classList.toggle('hidden', filteredProducts.length === 0)
-    emptyState.classList.toggle('hidden', filteredProducts.length > 0)
+
+    document.getElementById('count-number').textContent =
+      filteredProducts.length
+
+    grid.innerHTML = filteredProducts
+      .map((product, index) => {
+        const available =
+          product.status === 'Available' &&
+          product.stok > 0
+
+        const statusClass =
+          product.status === 'Available'
+            ? 'bg-success'
+            : product.status === 'Booked'
+              ? 'bg-warning'
+              : 'bg-error'
+
+        return `
+          <div
+            class="fade-up visible"
+            style="transition-delay: ${index * 40}ms"
+          >
+            <a
+              href="${
+                available
+                  ? `/catalog/${encodeURIComponent(product.id)}`
+                  : '#'
+              }"
+              class="card card-hover group flex flex-col transition-all duration-300 ${
+                available
+                  ? ''
+                  : 'opacity-60 cursor-not-allowed'
+              }"
+              aria-disabled="${!available}"
+            >
+              <div class="relative aspect-[4/3] overflow-hidden">
+                <img
+                  src="${escapeHtml(
+                    product.gambarUrl ||
+                      '/images/placeholder-gear.svg'
+                  )}"
+                  alt="${escapeHtml(product.namaProduk)}"
+                  loading="lazy"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.src='/images/placeholder-gear.svg'"
+                >
+
+                <div
+                  class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500"
+                ></div>
+
+                <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                  ${
+                    product.bestSeller
+                      ? `
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-500 text-white">
+                          Best Seller
+                        </span>
+                      `
+                      : ''
+                  }
+
+                  ${
+                    product.produkBaru
+                      ? `
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-olive-600 text-white">
+                          Baru
+                        </span>
+                      `
+                      : ''
+                  }
+                </div>
+
+                <div class="absolute bottom-3 left-3 flex items-center gap-1.5">
+                  <span
+                    class="w-2 h-2 rounded-full ${statusClass}"
+                  ></span>
+
+                  <span class="text-xs text-white/80 font-medium">
+                    ${escapeHtml(product.status)}
+                  </span>
+                </div>
+              </div>
+
+              <div class="p-4 flex-1 flex flex-col">
+                <p class="text-xs text-accent-500 font-medium mb-1 uppercase tracking-wider">
+                  ${escapeHtml(product.kategori)}
+                </p>
+
+                <h3 class="text-sm font-semibold text-white mb-3 line-clamp-2 leading-snug">
+                  ${escapeHtml(product.namaProduk)}
+                </h3>
+
+                <div class="mt-auto">
+                  <div class="flex items-baseline gap-1.5 mb-3">
+                    <span class="text-xs text-neutral-500">
+                      Mulai
+                    </span>
+
+                    <span class="text-lg font-bold text-white">
+                      ${formatRupiah(getMinPrice(product))}
+                    </span>
+
+                    <span class="text-xs text-neutral-500">
+                      /hari
+                    </span>
+                  </div>
+
+                  <div class="pt-3 border-t border-surface-border flex items-center justify-between">
+                    <span class="text-xs text-neutral-500">
+                      ${
+                        product.stok > 0
+                          ? `${product.stok} unit tersedia`
+                          : 'Stok habis'
+                      }
+                    </span>
+
+                    <span class="text-xs font-medium text-accent-500 group-hover:text-accent-400 transition-colors">
+                      ${
+                        available
+                          ? 'Detail →'
+                          : 'Tidak Tersedia'
+                      }
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        `
+      })
+      .join('')
+
+    grid.classList.toggle(
+      'hidden',
+      filteredProducts.length === 0
+    )
+
+    emptyState.classList.toggle(
+      'hidden',
+      filteredProducts.length > 0
+    )
   }
 
-  function filterAndRender() { filterProducts(); renderProducts() }
-  const debounce = (fn, wait) => { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => fn(...args), wait) } }
-  document.getElementById('search-input').addEventListener('input', debounce(filterAndRender, 300))
-  document.getElementById('category-filter').addEventListener('change', filterAndRender)
-  document.getElementById('status-filter').addEventListener('change', filterAndRender)
-  document.getElementById('sort-filter').addEventListener('change', filterAndRender)
+  function filterAndRender() {
+    filterProducts()
+    renderProducts()
+  }
+
+  const debounce = (fn, wait) => {
+    let timeout
+
+    return (...args) => {
+      clearTimeout(timeout)
+
+      timeout = setTimeout(
+        () => fn(...args),
+        wait
+      )
+    }
+  }
+
+  document
+    .getElementById('search-input')
+    .addEventListener(
+      'input',
+      debounce(filterAndRender, 300)
+    )
+
+  document
+    .getElementById('category-filter')
+    .addEventListener(
+      'change',
+      filterAndRender
+    )
+
+  document
+    .getElementById('status-filter')
+    .addEventListener(
+      'change',
+      filterAndRender
+    )
+
+  document
+    .getElementById('sort-filter')
+    .addEventListener(
+      'change',
+      filterAndRender
+    )
 
   productsData = await fetchProducts()
   filterAndRender()
